@@ -1,7 +1,9 @@
 import re
 import os
 import zipfile
+import string
 from collections import defaultdict
+from collections import OrderedDict
 
 # Regular expressions to extract data from the corpus
 doc_regex = re.compile("<DOC>.*?</DOC>", re.DOTALL)
@@ -17,7 +19,18 @@ for dir_path, dir_names, file_names in os.walk("ap89_collection_small"):
     allfiles = [os.path.join(dir_path, filename).replace("\\", "/") for filename in file_names if (filename != "readme" and filename != ".DS_Store")]
 
 stop_list = []
+
+doc_docID_map = {}
+docID = 1
+
+term_termID_map = {}
+termID = 1
+
+doc_dict = defaultdict(list)
+
+termInfo_map = {}
 punctuation = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+
 
 with open("stopwords.txt", "r") as f:
     for line in f:
@@ -39,9 +52,7 @@ for file in allfiles:
             # step 1 - lower-case words, remove punctuation, remove stop-words, etc. 
             
             text = text.lower()
-            for element in text:
-                if element in punctuation:
-                    text = text.replace(element, '')
+            text = text.translate(str.maketrans('', '', string.punctuation))
 
             for w in stop_list:
                 pattern = r'\b'+w+r'\b'
@@ -51,19 +62,39 @@ for file in allfiles:
             # step 3 - build index
 
             text = text.split()
-            doc_dict = defaultdict(list)
-            i = 0
-            position = 0
-            for term in text:
-                if (term not in doc_dict):
-                    doc_dict[term] = [[i, docno, position]]
-                    i = i + 1
-                    position = position + 1
-                else:
-                    # duplicate_key = [((doc_dict[term][0]), docno, text.index(term))]
-                    doc_dict[term].append([doc_dict[term][0][0], docno, position])       
-                    position = position + 1
-            
 
-           
-print(len(doc_dict["home"]))
+            doc_str = ""
+            doc_str = (docno).lower()
+            position = 1
+            for term in text:
+
+                if term not in term_termID_map:  #if term unique
+                    term_termID_map[term] = (termID, 1, 1) #(termid, termfreq overall in corpus, how many docs have this term)
+                    termID += 1
+
+                else: #if term is not unique
+                    if term not in doc_dict: #if term is not unique to corpus and not unique in doc
+                        term_termID_map[term] = (term_termID_map[term][0], term_termID_map[term][1] + 1, term_termID_map[term][2] + 1)
+                    else: #if term is not unique to doc and corpus
+                        term_termID_map[term] = (term_termID_map[term][0], term_termID_map[term][1] + 1, term_termID_map[term][2])
+
+                if (term not in doc_dict):
+                    doc_dict[term] = [(doc_str, position)]
+                    position += 1
+                else: 
+                    doc_dict[term].append((doc_str, position))
+                    position += 1 
+                                
+
+            doc_docID_map[doc_str] = (docID, len(text))
+            docID = docID + 1  
+
+        
+                
+#  AP890101-0001  
+# print(text)         
+# print(len(text))
+# print(doc_docID_map)
+# print (term_termID_map)
+# print(doc_dict)           
+# print(pre_posting_list['shoot'])
