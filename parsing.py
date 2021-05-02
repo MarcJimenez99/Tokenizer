@@ -28,7 +28,6 @@ termID = 1
 
 doc_dict = defaultdict(list)
 
-termInfo_map = {}
 punctuation = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
 
 

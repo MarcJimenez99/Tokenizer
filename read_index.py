@@ -7,9 +7,9 @@ arguments = len(sys.argv) - 1
 
 position = 1
 
-while (arguments >= position):
-    print ("Parameter %i: %s" % (position, sys.argv[position]))
-    position = position + 1
+# while (arguments >= position):
+#     print ("Parameter %i: %s" % (position, sys.argv[position]))
+#     position = position + 1
 
 if (arguments < 4):
     if (sys.argv[1] == "--doc"):
