@@ -11,9 +11,9 @@
 ###### Language used, how to run your code, if you attempted the extra credit (stemming), etc. 
 
 To run the code make sure the parsing.py and read_index.py scripts are initialized.
-1) python read_index.py --term <term>
-2) python read_index.py --doc <docno>
-3) python read_index.py --term <term> --doc <docno>
+1) python read_index.py --term (term)
+2) python read_index.py --doc (docno)
+3) python read_index.py --term (term) --doc (docno)
 
 Python 3.7.7, extra credit was no attempted
 
